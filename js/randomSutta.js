@@ -347,7 +347,6 @@ var suttaList=new Array(
 	"tipitaka/dn/dn.31.0.ksw0.html",
 	"tipitaka/dn/dn.31.0.nara.html",
 	"tipitaka/dn/dn.32.0.piya.html",
-	"tipitaka/kn/dhp/dhp-buddh-than.html",
 	"tipitaka/kn/dhp/dhp.01.budd.html",
 	"tipitaka/kn/dhp/dhp.01.than.html",
 	"tipitaka/kn/dhp/dhp.02.budd.html",
