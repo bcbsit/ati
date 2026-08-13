@@ -2,7 +2,7 @@
 @import url('dropDown2.css');
 
 /* 	Restore some basic tags following the reset.
-(See http://www.w3.org/TR/CSS2/sample.html for some common browser default values.)*/
+(See https://www.w3.org/TR/CSS2/sample.html for some common browser default values.)*/
 p	{margin: 1.33em 0;}
 em	{font-style:italic;}
 sup {vertical-align: super; font-size:80%;}
