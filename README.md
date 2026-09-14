@@ -8,7 +8,7 @@ The name "Access to Insight" refers to the particular collection of hyperlinked 
 
 You are invited to download the website for your own use, share it with others, or re-post it elsewhere on the web. You are encouraged to incorporate its texts into your own website (within the terms of the copyright licenses, of course),  to use its many articles and sutta translations as the seed for your own online anthology of Buddhist texts, or to develop new and improved tools for accessing, exploring, and sharing them. The possibilities are endless.
 
-##Building derived works from Access to Insight
+## Building derived works from Access to Insight
 
 The relevant copyright license appears at the bottom of each rendered page on the site. The copyrighted portions are demarcated in the markup, thus:
 
