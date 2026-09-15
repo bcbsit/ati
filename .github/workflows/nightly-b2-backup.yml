@@ -1,0 +1,57 @@
+name: Nightly B2 Backup
+
+on:
+  schedule:
+    # Run every day at 2:00 AM UTC
+    - cron: '0 2 * * *'
+  # Allow manual trigger from Actions tab
+  workflow_dispatch:
+
+jobs:
+  backup:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Create backup tarball
+        run: |
+          BACKUP_NAME="repo-backup-$(date +%Y%m%d-%H%M%S).tar.gz"
+          tar --exclude='.git/objects' -czf "$BACKUP_NAME" .
+          echo "BACKUP_FILE=$BACKUP_NAME" >> $GITHUB_ENV
+
+      - name: Upload to Backblaze B2
+        env:
+          B2_APP_KEY_ID: ${{ secrets.B2_APP_KEY_ID }}
+          B2_APP_KEY: ${{ secrets.B2_APP_KEY }}
+          B2_BUCKET_NAME: ${{ secrets.B2_BUCKET_NAME }}
+        run: |
+          # Install b2 CLI
+          pip install b2
+
+          # Authorize with B2
+          b2 account-info authorize-account "$B2_APP_KEY_ID" "$B2_APP_KEY"
+
+          # Upload backup
+          b2 file upload --noProgress "$B2_BUCKET_NAME" "${{ env.BACKUP_FILE }}" "${{ env.BACKUP_FILE }}"
+
+          # Log success
+          echo "Backup uploaded: ${{ env.BACKUP_FILE }}"
+
+      - name: Clean up old backups (keep last 7)
+        env:
+          B2_APP_KEY_ID: ${{ secrets.B2_APP_KEY_ID }}
+          B2_APP_KEY: ${{ secrets.B2_APP_KEY }}
+          B2_BUCKET_NAME: ${{ secrets.B2_BUCKET_NAME }}
+        run: |
+          b2 account-info authorize-account "$B2_APP_KEY_ID" "$B2_APP_KEY"
+
+          # List files, sort by date, keep last 7, delete older ones
+          b2 ls --long "$B2_BUCKET_NAME" | sort -k6 -k7 | head -n -7 | awk '{print $NF}' | while read file; do
+            if [ ! -z "$file" ]; then
+              b2 file delete "$B2_BUCKET_NAME" "$file"
+              echo "Deleted old backup: $file"
+            fi
+          done
