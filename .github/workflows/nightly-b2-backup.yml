@@ -37,7 +37,7 @@ jobs:
           B2_BUCKET_NAME: ${{ secrets.B2_BUCKET_NAME }}
         run: |
           pip install b2
-          b2 account-info authorize-account "$B2_APP_KEY_ID" "$B2_APP_KEY"
+          b2 authorize-account "$B2_APP_KEY_ID" "$B2_APP_KEY"
 
           b2 file upload \
             --noProgress \
@@ -53,11 +53,18 @@ jobs:
           B2_APP_KEY: ${{ secrets.B2_APP_KEY }}
           B2_BUCKET_NAME: ${{ secrets.B2_BUCKET_NAME }}
         run: |
-          b2 account-info authorize-account "$B2_APP_KEY_ID" "$B2_APP_KEY"
-          # List files in reverse chronological order, skip first 7, delete the rest
-          b2 ls --long --recursive "$B2_BUCKET_NAME" | sort -r | tail -n +8 | awk '{print $1, $NF}' | while read file_id file_name; do
-            if [ ! -z "$file_id" ] && [ ! -z "$file_name" ]; then
-              b2 file delete --fileId "$file_id" "$B2_BUCKET_NAME" "$file_name"
-              echo "Deleted old backup: $file_name"
-            fi
-          done
+          b2 authorize-account "$B2_APP_KEY_ID" "$B2_APP_KEY"
+
+          b2 ls --long --recursive "$B2_BUCKET_NAME" |
+            sort -r |
+            tail -n +8 |
+            awk '{print $1, $NF}' |
+            while read -r file_id file_name; do
+              if [ -n "$file_id" ] && [ -n "$file_name" ]; then
+                b2 file delete \
+                  --fileId "$file_id" \
+                  "$B2_BUCKET_NAME" \
+                  "$file_name"
+                echo "Deleted old backup: $file_name"
+              fi
+            done
