@@ -21,7 +21,11 @@ jobs:
           BACKUP_NAME="repo-backup-$(date +%Y%m%d-%H%M%S).tar.gz"
           BACKUP_PATH="$RUNNER_TEMP/$BACKUP_NAME"
 
-          tar --exclude='.git/objects' -czf "$BACKUP_PATH" .
+          tar \
+            --exclude='./.git/objects' \
+            --exclude="./$BACKUP_NAME" \
+            -czf "$BACKUP_PATH" \
+            .
 
           echo "BACKUP_NAME=$BACKUP_NAME" >> "$GITHUB_ENV"
           echo "BACKUP_PATH=$BACKUP_PATH" >> "$GITHUB_ENV"
@@ -33,7 +37,6 @@ jobs:
           B2_BUCKET_NAME: ${{ secrets.B2_BUCKET_NAME }}
         run: |
           pip install b2
-
           b2 account-info authorize-account "$B2_APP_KEY_ID" "$B2_APP_KEY"
 
           b2 file upload \
