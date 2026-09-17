@@ -12,7 +12,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout repository
-        uses: actions/checkout@v4
+        uses: actions/checkout@v4.2.0
         with:
           fetch-depth: 0
 
@@ -47,11 +47,10 @@ jobs:
           B2_BUCKET_NAME: ${{ secrets.B2_BUCKET_NAME }}
         run: |
           b2 account-info authorize-account "$B2_APP_KEY_ID" "$B2_APP_KEY"
-
-          # List files, sort by date, keep last 7, delete older ones
-          b2 ls --long "$B2_BUCKET_NAME" | sort -k6 -k7 | head -n -7 | awk '{print $NF}' | while read file; do
-            if [ ! -z "$file" ]; then
-              b2 file delete "$B2_BUCKET_NAME" "$file"
-              echo "Deleted old backup: $file"
+          # List files in reverse chronological order, skip first 7, delete the rest
+          b2 ls --long --recursive "$B2_BUCKET_NAME" | sort -r | tail -n +8 | awk '{print $1, $NF}' | while read file_id file_name; do
+            if [ ! -z "$file_id" ] && [ ! -z "$file_name" ]; then
+              b2 file delete --fileId "$file_id" "$B2_BUCKET_NAME" "$file_name"
+              echo "Deleted old backup: $file_name"
             fi
           done
