@@ -35,21 +35,44 @@ These guidelines also apply when converting the files into entirely different fo
 A few PDF files have been locked and password-protected by their publisher, to restrict reformatting. Please do _not_ attempt to circumvent these security measures. If you are interested in altering or converting password-protected files, please ask the author or publisher for permission.
 
 
-## How to Update This Site
+## How to Update The Site
 
-### Edits:
+### Editing Pages on the Site:
 
-1. **Go to the site repo on Github** → https://github.com/bcbsit/ati
-2. **Click on the file you need to edit** → i.e. Edit `befriending.html` by clicking on the file. You will see the file menu to the left, code to the right.
-3. **Click the pencil item** → Click the pencil item which is top-right of the file view to edit
-4. **Make changes in the editor** → Use the editor to make the changes you need
-5. **Commit changes** → Click the green Commit Changes button and fill out the commit message. Select the “Commit directly to the main branch” option.
-6. **Changes are automatically deployed** → Your changes are automatically deployed by Netlify.
+1. Go to the site repo on Github → https://github.com/bcbsit/ati
+2. Click on the file you need to edit → i.e. Edit `befriending.html` by clicking on the file. You will see the file menu to the left, code to the right.
+3. Click the pencil item → Click the pencil item which is top-right of the file view to edit
+4. Make changes in the editor → Use the editor to make the changes you need
+5. Commit changes → Click the green Commit Changes button and fill out the commit message. Select the “Commit directly to the main branch” option.
+6. Changes are automatically deployed → Your changes are automatically deployed by Netlify.
 
 ### Understand what Netlify is doing:
 
-1. **Log in to Netlify** → Navigate to https://app.netlify.com/login and log in with your GitHub account. Look at the accesstoinsight.org project box. You’ll see a notice that says your site was published recently.
-2. **View your deploys** → Click on the Access to Insight project. You’ll see a list of your deploys.
+1. Log in to Netlify → Navigate to https://app.netlify.com/login and log in with your GitHub account. Look at the accesstoinsight.org project box. You’ll see a notice that says your site was published recently.
+2. View your deploys → Click on the Access to Insight project. You’ll see a list of your deploys with details.
 
 
-## Backblaze Backup
+## GitHub to Backblaze B2 Nightly Backup Setup
+
+The site uses a GitHub Actions workflow that backs up the entire repo nightly to B2. Details are:
+
+* File: actions/workflows/nightly-b2-backup.yml
+* Trigger: Nightly at 2am UTC (you can adjust if you want)
+* Action: Exports repo as tarball, uploads to B2
+* Credentials: Stored as GitHub secrets here: https://github.com/bcbsit/ati/settings/secrets/actions
+    * B2_APP_KEY_ID - Your application key ID from Backblaze
+    * B2_APP_KEY - The application key secret given you when you set up the bucket
+    * B2_BUCKET_NAME - The B2 bucket name
+
+To look at the workflow runs:
+
+* Navigate to https://github.com/bcbsit/ati/actions/workflows/nightly-b2-backup.yml
+* You will see a list of runs. 
+
+To manually run the workflow:
+
+* Navigate to https://github.com/bcbsit/ati/actions/workflows/nightly-b2-backup.yml
+* Find the “Run workflow” button. Select “Use workflow from main” (unless you have a file in a branch you wish to run instead) and click “Run workflow”
+
+
+
