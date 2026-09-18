@@ -54,16 +54,14 @@ jobs:
         run: |
           b2 authorize-account "$B2_APP_KEY_ID" "$B2_APP_KEY"
 
-          b2 ls --long --recursive "$B2_BUCKET_NAME" |
+          b2 ls --long --recursive "b2://$B2_BUCKET_NAME" |
             sort -r |
             tail -n +8 |
             awk '{print $1, $NF}' |
             while read -r file_id file_name; do
               if [ -n "$file_id" ] && [ -n "$file_name" ]; then
-                b2 file delete \
-                  --fileId "$file_id" \
-                  "$B2_BUCKET_NAME" \
-                  "$file_name"
+                b2 rm --versions \
+                  "b2://$B2_BUCKET_NAME/$file_name"
                 echo "Deleted old backup: $file_name"
               fi
             done
