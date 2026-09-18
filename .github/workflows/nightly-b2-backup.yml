@@ -40,7 +40,6 @@ jobs:
           b2 authorize-account "$B2_APP_KEY_ID" "$B2_APP_KEY"
 
           b2 file upload \
-            --noProgress \
             "$B2_BUCKET_NAME" \
             "$BACKUP_PATH" \
             "$BACKUP_NAME"
